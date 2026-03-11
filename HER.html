@@ -1,1268 +1,458 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="CycleCare">
-  <title>CycleCare 🌸</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
-    rel="stylesheet">
-  <style>
-    :root {
-      --rose: #F43F6B;
-      --rose-soft: #FF8FAB;
-      --blush: #FFE4ED;
-      --blush-deep: #FFCCE0;
-      --lilac: #E8D5FF;
-      --lilac-dark: #9B59D0;
-      --cream: #FFF8F9;
-      --text: #3D1A2E;
-      --muted: #9B7A8A;
-      --water: #5BBCFF;
-      --water-bg: #E8F6FF;
-      --gold: #F5A623;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--cream);
-      min-height: 100vh;
-      color: var(--text);
-      padding-bottom: 60px;
-      position: relative;
-      overflow-x: hidden;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body::before {
-      content: '';
-      position: fixed;
-      top: -80px;
-      right: -80px;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, #FFD6E7 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    body::after {
-      content: '';
-      position: fixed;
-      bottom: -100px;
-      left: -80px;
-      width: 350px;
-      height: 350px;
-      background: radial-gradient(circle, var(--lilac) 0%, transparent 70%);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .app {
-      max-width: 420px;
-      margin: 0 auto;
-      padding: 0 18px;
-      position: relative;
-      z-index: 1;
-    }
-
-    header {
-      padding: 44px 0 22px;
-      text-align: center;
-    }
-
-    header .subtitle {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--rose);
-      margin-bottom: 8px;
-    }
-
-    header h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 36px;
-      color: var(--text);
-      line-height: 1.1;
-    }
-
-    header h1 em {
-      color: var(--rose);
-      font-style: italic;
-    }
-
-    .header-note {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 6px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 28px;
-      padding: 22px;
-      margin-bottom: 14px;
-      box-shadow: 0 4px 24px rgba(244, 63, 107, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-    }
-
-    .card-title {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 16px;
-    }
-
-    .cycle-display {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .cycle-day-circle {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      flex-shrink: 0;
-      background: linear-gradient(135deg, var(--rose), var(--rose-soft));
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      box-shadow: 0 8px 20px rgba(244, 63, 107, 0.35);
-    }
-
-    .cycle-day-circle .num {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      line-height: 1;
-    }
-
-    .cycle-day-circle .lbl {
-      font-size: 10px;
-      font-weight: 500;
-      opacity: 0.85;
-    }
-
-    .cycle-info {
-      flex: 1;
-    }
-
-    .phase-badge {
-      display: inline-block;
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      background: var(--blush);
-      color: var(--rose);
-      margin-bottom: 8px;
-    }
-
-    .next-period {
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .next-period strong {
-      color: var(--text);
-    }
-
-    .cycle-inputs {
-      margin-top: 16px;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .input-group {
-      flex: 1;
-    }
-
-    .input-group label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .input-group input {
-      width: 100%;
-      padding: 12px 14px;
-      border: 2px solid var(--blush);
-      border-radius: 14px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      color: var(--text);
-      background: var(--cream);
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .input-group input:focus {
-      border-color: var(--rose);
-    }
-
-    .btn-primary {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, var(--rose), #FF6B9E);
-      color: white;
-      border: none;
-      border-radius: 18px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.25s;
-      box-shadow: 0 6px 20px rgba(244, 63, 107, 0.3);
-    }
-
-    .btn-primary:active {
-      transform: scale(0.98);
-    }
-
-    .section-label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 10px;
-      margin-top: 4px;
-    }
-
-    .mood-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .mood-btn {
-      padding: 14px 10px;
-      border-radius: 18px;
-      border: 2px solid var(--blush);
-      background: var(--cream);
-      cursor: pointer;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      transition: all 0.2s;
-      text-align: center;
-      line-height: 1.3;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .mood-btn .emoji {
-      font-size: 22px;
-      display: block;
-      margin-bottom: 4px;
-    }
-
-    .mood-btn:active {
-      transform: scale(0.97);
-    }
-
-    .mood-btn.selected {
-      border-color: var(--rose);
-      background: var(--rose);
-      color: white;
-      box-shadow: 0 6px 16px rgba(244, 63, 107, 0.3);
-      transform: scale(1.02);
-    }
-
-    .sug-box {
-      border-radius: 20px;
-      padding: 16px;
-      margin-top: 10px;
-      display: none;
-    }
-
-    .sug-box.visible {
-      display: block;
-      animation: fadeSlide 0.4s ease;
-    }
-
-    .mood-sug-box {
-      background: linear-gradient(135deg, var(--blush), var(--lilac));
-    }
-
-    .food-sug-box {
-      background: linear-gradient(135deg, #FFF3E0, #FFE8F5);
-    }
-
-    .sug-loading {
-      text-align: center;
-      padding: 12px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .sug-loading .spin {
-      display: inline-block;
-      animation: spinA 1s linear infinite;
-    }
-
-    @keyframes spinA {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .sug-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 10px;
-      align-items: flex-start;
-    }
-
-    .sug-icon {
-      font-size: 20px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .sug-content {
-      flex: 1;
-    }
-
-    .sug-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 3px;
-    }
-
-    .sug-val {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      line-height: 1.4;
-    }
-
-    .sug-sub {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-      font-style: italic;
-    }
-
-    .sug-divider {
-      height: 1px;
-      background: rgba(244, 63, 107, 0.1);
-      margin: 8px 0;
-    }
-
-    .care-msg-text {
-      font-size: 14px;
-      color: var(--text);
-      line-height: 1.6;
-      margin-top: 6px;
-      font-weight: 500;
-    }
-
-    .btn-refresh {
-      width: 100%;
-      margin-top: 10px;
-      padding: 12px;
-      background: white;
-      border: 2px solid var(--blush);
-      border-radius: 14px;
-      color: var(--rose);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .btn-refresh:active {
-      transform: scale(0.98);
-    }
-
-    .send-hint-area {
-      display: none;
-      margin-top: 12px;
-    }
-
-    .send-hint-area.visible {
-      display: block;
-      animation: fadeSlide 0.3s ease;
-    }
-
-    .hint-input {
-      width: 100%;
-      padding: 12px 14px;
-      border: 2px solid var(--blush);
-      border-radius: 14px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      color: var(--text);
-      background: var(--cream);
-      outline: none;
-      resize: none;
-      margin-bottom: 10px;
-      transition: border-color 0.2s;
-    }
-
-    .hint-input:focus {
-      border-color: var(--rose);
-    }
-
-    .water-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .water-num {
-      font-family: 'Playfair Display', serif;
-      font-size: 32px;
-      font-weight: 700;
-      color: var(--water);
-    }
-
-    .water-num span {
-      font-size: 16px;
-      color: var(--muted);
-      font-family: 'DM Sans', sans-serif;
-    }
-
-    .glass-row {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-
-    .glass {
-      width: 30px;
-      height: 36px;
-      border-radius: 3px 3px 7px 7px;
-      border: 2px solid var(--blush-deep);
-      background: var(--cream);
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .glass.filled {
-      border-color: var(--water);
-      box-shadow: 0 2px 8px rgba(91, 188, 255, 0.25);
-    }
-
-    .glass.filled::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 65%;
-      background: linear-gradient(to top, rgba(91, 188, 255, 0.5), rgba(91, 188, 255, 0.15));
-    }
-
-    .wish-input-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 14px;
-    }
-
-    .wish-input {
-      flex: 1;
-      padding: 12px 14px;
-      border: 2px solid var(--blush);
-      border-radius: 14px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      color: var(--text);
-      background: var(--cream);
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .wish-input:focus {
-      border-color: var(--rose);
-    }
-
-    .wish-input::placeholder {
-      color: var(--muted);
-    }
-
-    .btn-add-wish {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--rose), #FF6B9E);
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(244, 63, 107, 0.3);
-    }
-
-    .btn-add-wish:active {
-      transform: scale(0.95);
-    }
-
-    .wish-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .wish-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      background: var(--cream);
-      border-radius: 16px;
-      border: 2px solid var(--blush);
-      animation: fadeSlide 0.3s ease;
-    }
-
-    .wish-text {
-      flex: 1;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-    }
-
-    .wish-del {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 16px;
-      cursor: pointer;
-      padding: 6px 8px;
-      border-radius: 8px;
-      transition: all 0.2s;
-      min-width: 36px;
-      min-height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .wish-del:active {
-      color: var(--rose);
-      background: var(--blush);
-    }
-
-    .wish-empty {
-      text-align: center;
-      padding: 20px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .wish-empty .big {
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
-
-    .wish-note {
-      text-align: center;
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 10px;
-      background: var(--blush);
-      padding: 8px;
-      border-radius: 10px;
-    }
-
-    .chat-win {
-      height: 240px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      padding: 4px 0 8px;
-      margin-bottom: 12px;
-    }
-
-    .chat-win::-webkit-scrollbar {
-      width: 3px;
-    }
-
-    .chat-win::-webkit-scrollbar-thumb {
-      background: var(--blush-deep);
-      border-radius: 3px;
-    }
-
-    .bubble {
-      max-width: 80%;
-      padding: 10px 14px;
-      border-radius: 20px;
-      font-size: 14px;
-      line-height: 1.45;
-      word-break: break-word;
-      animation: fadeSlide 0.25s ease;
-    }
-
-    .bubble.me {
-      align-self: flex-end;
-      background: linear-gradient(135deg, var(--rose), #FF6B9E);
-      color: white;
-      border-bottom-right-radius: 4px;
-    }
-
-    .bubble.them {
-      align-self: flex-start;
-      background: var(--blush);
-      color: var(--text);
-      border-bottom-left-radius: 4px;
-    }
-
-    .bubble .bt {
-      font-size: 10px;
-      opacity: 0.6;
-      margin-top: 4px;
-    }
-
-    .bubble.me .bt {
-      text-align: right;
-    }
-
-    .chat-in-row {
-      display: flex;
-      gap: 8px;
-      align-items: flex-end;
-    }
-
-    .chat-inp {
-      flex: 1;
-      padding: 12px 14px;
-      border: 2px solid var(--blush);
-      border-radius: 18px;
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 16px;
-      outline: none;
-      resize: none;
-      max-height: 80px;
-      transition: border-color 0.2s;
-      background: var(--cream);
-    }
-
-    .chat-inp:focus {
-      border-color: var(--rose);
-    }
-
-    .chat-inp::placeholder {
-      color: var(--muted);
-    }
-
-    .btn-send {
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--rose), #FF6B9E);
-      border: none;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s;
-      box-shadow: 0 4px 12px rgba(244, 63, 107, 0.3);
-      flex-shrink: 0;
-    }
-
-    .btn-send:active {
-      transform: scale(0.94);
-    }
-
-    .chat-empty {
-      text-align: center;
-      padding: 28px;
-      color: var(--muted);
-      font-size: 13px;
-      font-style: italic;
-    }
-
-    .notif-dot {
-      display: none;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--rose);
-      position: absolute;
-      top: -2px;
-      right: -2px;
-      animation: blink 1.5s infinite;
-    }
-
-    .notif-wrap {
-      position: relative;
-      display: inline-block;
-    }
-
-    .connect-badge {
-      text-align: center;
-      background: var(--lilac);
-      border-radius: 20px;
-      padding: 14px 20px;
-      margin-bottom: 14px;
-    }
-
-    .connect-badge .code {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      color: var(--lilac-dark);
-      letter-spacing: 6px;
-      font-weight: 700;
-    }
-
-    .connect-badge p {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .sync-banner {
-      text-align: center;
-      font-size: 12px;
-      color: var(--muted);
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    .sync-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #4CAF50;
-      animation: pulse 2s infinite;
-    }
-
-    .sync-dot.offline {
-      background: #FF9800;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 20px;
-      font-weight: 500;
-    }
-
-    .fb-status {
-      font-size: 11px;
-      text-align: center;
-      padding: 6px;
-      color: var(--muted);
-    }
-
-    @keyframes fadeSlide {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes pulse {
-
-      0%,
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-
-      50% {
-        opacity: 0.5;
-        transform: scale(0.8);
-      }
-    }
-
-    @keyframes blink {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: 0.3;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CycleCare">
+<title>CycleCare 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#F43F6B;--rose-soft:#FF8FAB;--blush:#FFE4ED;--blush-deep:#FFCCE0;--lilac:#E8D5FF;--lilac-dark:#9B59D0;--cream:#FFF8F9;--text:#3D1A2E;--muted:#9B7A8A;--water:#5BBCFF;--water-bg:#E8F6FF;--gold:#F5A623;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);min-height:100vh;color:var(--text);padding-bottom:60px;position:relative;overflow-x:hidden;-webkit-tap-highlight-color:transparent;}
+body::before{content:'';position:fixed;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,#FFD6E7 0%,transparent 70%);border-radius:50%;pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;bottom:-100px;left:-80px;width:350px;height:350px;background:radial-gradient(circle,var(--lilac) 0%,transparent 70%);border-radius:50%;pointer-events:none;z-index:0;}
+.app{max-width:420px;margin:0 auto;padding:0 18px;position:relative;z-index:1;}
+header{padding:44px 0 22px;text-align:center;}
+header .subtitle{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--rose);margin-bottom:8px;}
+header h1{font-family:'Playfair Display',serif;font-size:36px;color:var(--text);line-height:1.1;}
+header h1 em{color:var(--rose);font-style:italic;}
+.header-note{font-size:13px;color:var(--muted);margin-top:6px;}
+.card{background:white;border-radius:28px;padding:22px;margin-bottom:14px;box-shadow:0 4px 24px rgba(244,63,107,0.08);border:1px solid rgba(255,255,255,0.8);}
+.card-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+.cycle-display{display:flex;align-items:center;gap:16px;}
+.cycle-day-circle{width:80px;height:80px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--rose),var(--rose-soft));display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;box-shadow:0 8px 20px rgba(244,63,107,0.35);}
+.cycle-day-circle .num{font-family:'Playfair Display',serif;font-size:28px;line-height:1;}
+.cycle-day-circle .lbl{font-size:10px;font-weight:500;opacity:0.85;}
+.cycle-info{flex:1;}
+.phase-badge{display:inline-block;padding:5px 14px;border-radius:20px;font-size:13px;font-weight:600;background:var(--blush);color:var(--rose);margin-bottom:8px;}
+.next-period{font-size:13px;color:var(--muted);}
+.next-period strong{color:var(--text);}
+.cycle-inputs{margin-top:16px;}
+.input-row{display:flex;gap:10px;margin-bottom:12px;}
+.input-group{flex:1;}
+.input-group label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px;}
+.input-group input{width:100%;padding:12px 14px;border:2px solid var(--blush);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--text);background:var(--cream);outline:none;transition:border-color 0.2s;}
+.input-group input:focus{border-color:var(--rose);}
+.btn-primary{width:100%;padding:15px;background:linear-gradient(135deg,var(--rose),#FF6B9E);color:white;border:none;border-radius:18px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.25s;box-shadow:0 6px 20px rgba(244,63,107,0.3);}
+.btn-primary:active{transform:scale(0.98);}
+.section-label{font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;margin-top:4px;}
+.mood-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.mood-btn{padding:14px 10px;border-radius:18px;border:2px solid var(--blush);background:var(--cream);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--text);transition:all 0.2s;text-align:center;line-height:1.3;-webkit-tap-highlight-color:transparent;}
+.mood-btn .emoji{font-size:22px;display:block;margin-bottom:4px;}
+.mood-btn:active{transform:scale(0.97);}
+.mood-btn.selected{border-color:var(--rose);background:var(--rose);color:white;box-shadow:0 6px 16px rgba(244,63,107,0.3);transform:scale(1.02);}
+.sug-box{border-radius:20px;padding:16px;margin-top:10px;display:none;}
+.sug-box.visible{display:block;animation:fadeSlide 0.4s ease;}
+.mood-sug-box{background:linear-gradient(135deg,var(--blush),var(--lilac));}
+.food-sug-box{background:linear-gradient(135deg,#FFF3E0,#FFE8F5);}
+.sug-loading{text-align:center;padding:12px;color:var(--muted);font-size:13px;}
+.sug-loading .spin{display:inline-block;animation:spinA 1s linear infinite;}
+@keyframes spinA{to{transform:rotate(360deg);}}
+.sug-row{display:flex;gap:10px;margin-bottom:10px;align-items:flex-start;}
+.sug-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.sug-content{flex:1;}
+.sug-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.sug-val{font-size:14px;font-weight:600;color:var(--text);line-height:1.4;}
+.sug-sub{font-size:12px;color:var(--muted);margin-top:2px;font-style:italic;}
+.sug-divider{height:1px;background:rgba(244,63,107,0.1);margin:8px 0;}
+.care-msg-text{font-size:14px;color:var(--text);line-height:1.6;margin-top:6px;font-weight:500;}
+.btn-refresh{width:100%;margin-top:10px;padding:12px;background:white;border:2px solid var(--blush);border-radius:14px;color:var(--rose);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-refresh:active{transform:scale(0.98);}
+.send-hint-area{display:none;margin-top:12px;}
+.send-hint-area.visible{display:block;animation:fadeSlide 0.3s ease;}
+.hint-input{width:100%;padding:12px 14px;border:2px solid var(--blush);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--text);background:var(--cream);outline:none;resize:none;margin-bottom:10px;transition:border-color 0.2s;}
+.hint-input:focus{border-color:var(--rose);}
+.water-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.water-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--water);}
+.water-num span{font-size:16px;color:var(--muted);font-family:'DM Sans',sans-serif;}
+.glass-row{display:flex;gap:5px;flex-wrap:wrap;}
+.glass{width:30px;height:36px;border-radius:3px 3px 7px 7px;border:2px solid var(--blush-deep);background:var(--cream);transition:all 0.3s;position:relative;overflow:hidden;}
+.glass.filled{border-color:var(--water);box-shadow:0 2px 8px rgba(91,188,255,0.25);}
+.glass.filled::after{content:'';position:absolute;bottom:0;left:0;right:0;height:65%;background:linear-gradient(to top,rgba(91,188,255,0.5),rgba(91,188,255,0.15));}
+.wish-input-row{display:flex;gap:8px;margin-bottom:14px;}
+.wish-input{flex:1;padding:12px 14px;border:2px solid var(--blush);border-radius:14px;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--text);background:var(--cream);outline:none;transition:border-color 0.2s;}
+.wish-input:focus{border-color:var(--rose);}
+.wish-input::placeholder{color:var(--muted);}
+.btn-add-wish{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--rose),#FF6B9E);border:none;color:white;font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;box-shadow:0 4px 12px rgba(244,63,107,0.3);}
+.btn-add-wish:active{transform:scale(0.95);}
+.wish-list{display:flex;flex-direction:column;gap:8px;}
+.wish-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--cream);border-radius:16px;border:2px solid var(--blush);animation:fadeSlide 0.3s ease;}
+.wish-text{flex:1;font-size:14px;font-weight:500;color:var(--text);}
+.wish-del{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:6px 8px;border-radius:8px;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center;}
+.wish-del:active{color:var(--rose);background:var(--blush);}
+.wish-empty{text-align:center;padding:20px;color:var(--muted);font-size:13px;}
+.wish-empty .big{font-size:30px;margin-bottom:8px;}
+.wish-note{text-align:center;font-size:11px;color:var(--muted);margin-top:10px;background:var(--blush);padding:8px;border-radius:10px;}
+.chat-win{height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 0 8px;margin-bottom:12px;}
+.chat-win::-webkit-scrollbar{width:3px;}
+.chat-win::-webkit-scrollbar-thumb{background:var(--blush-deep);border-radius:3px;}
+.bubble{max-width:80%;padding:10px 14px;border-radius:20px;font-size:14px;line-height:1.45;word-break:break-word;animation:fadeSlide 0.25s ease;}
+.bubble.me{align-self:flex-end;background:linear-gradient(135deg,var(--rose),#FF6B9E);color:white;border-bottom-right-radius:4px;}
+.bubble.them{align-self:flex-start;background:var(--blush);color:var(--text);border-bottom-left-radius:4px;}
+.bubble .bt{font-size:10px;opacity:0.6;margin-top:4px;}
+.bubble.me .bt{text-align:right;}
+.chat-in-row{display:flex;gap:8px;align-items:flex-end;}
+.chat-inp{flex:1;padding:12px 14px;border:2px solid var(--blush);border-radius:18px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;outline:none;resize:none;max-height:80px;transition:border-color 0.2s;background:var(--cream);}
+.chat-inp:focus{border-color:var(--rose);}
+.chat-inp::placeholder{color:var(--muted);}
+.btn-send{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#FF6B9E);border:none;color:white;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(244,63,107,0.3);flex-shrink:0;}
+.btn-send:active{transform:scale(0.94);}
+.chat-empty{text-align:center;padding:28px;color:var(--muted);font-size:13px;font-style:italic;}
+.notif-dot{display:none;width:8px;height:8px;border-radius:50%;background:var(--rose);position:absolute;top:-2px;right:-2px;animation:blink 1.5s infinite;}
+.notif-wrap{position:relative;display:inline-block;}
+.connect-badge{text-align:center;background:var(--lilac);border-radius:20px;padding:14px 20px;margin-bottom:14px;}
+.connect-badge .code{font-family:'Playfair Display',serif;font-size:28px;color:var(--lilac-dark);letter-spacing:6px;font-weight:700;}
+.connect-badge p{font-size:11px;color:var(--muted);margin-top:4px;}
+.sync-banner{text-align:center;font-size:12px;color:var(--muted);padding:10px;display:flex;align-items:center;justify-content:center;gap:6px;}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#4CAF50;animation:pulse 2s infinite;}
+footer{text-align:center;font-size:12px;color:var(--muted);margin-top:20px;font-weight:500;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+</style>
 </head>
-
 <body>
-  <div class="app">
-    <header>
-      <div class="subtitle">Your personal</div>
-      <h1>Cycle<em>Care</em> 🌸</h1>
-      <p class="header-note">Made just for you 💕</p>
-    </header>
+<div class="app">
+  <header>
+    <div class="subtitle">Your personal</div>
+    <h1>Cycle<em>Care</em> 🌸</h1>
+    <p class="header-note">Made just for you 💕</p>
+  </header>
 
-    <div class="connect-badge">
-      <div class="code" id="sharedCode">—</div>
-      <p>Your sync code ✨</p>
-    </div>
-    <div class="fb-status" id="fbStatus">Connecting...</div>
-
-    <!-- CYCLE -->
-    <div class="card">
-      <div class="card-title">📅 Cycle Overview</div>
-      <div class="cycle-display" id="cycleDisplay" style="display:none;">
-        <div class="cycle-day-circle"><span class="num" id="cycleDay">—</span><span class="lbl">day</span></div>
-        <div class="cycle-info">
-          <div class="phase-badge" id="phaseBadge">—</div>
-          <div class="next-period">Next: <strong id="nextPeriodDate">—</strong></div>
-        </div>
-      </div>
-      <div class="cycle-inputs">
-        <div class="input-row">
-          <div class="input-group"><label>Last Period</label><input type="date" id="lastDate"></div>
-          <div class="input-group"><label>Cycle Length</label><input type="number" id="cycleLength" value="28" min="20"
-              max="45"></div>
-        </div>
-        <button class="btn-primary" onclick="calculateCycle()">Update My Cycle</button>
-      </div>
-    </div>
-
-    <!-- CHECK IN -->
-    <div class="card">
-      <div class="card-title">💖 How are you feeling?</div>
-      <p class="section-label">My mood today</p>
-      <div class="mood-grid">
-        <button class="mood-btn" id="mood-Happy" onclick="logMood('Happy')"> <span class="emoji">🥰</span>Happy</button>
-        <button class="mood-btn" id="mood-Sensitive" onclick="logMood('Sensitive')"><span
-            class="emoji">🥺</span>Sensitive</button>
-        <button class="mood-btn" id="mood-Annoyed" onclick="logMood('Annoyed')"> <span
-            class="emoji">😤</span>Annoyed</button>
-        <button class="mood-btn" id="mood-Exhausted" onclick="logMood('Exhausted')"><span
-            class="emoji">😴</span>Exhausted</button>
-        <button class="mood-btn" id="mood-Romantic" onclick="logMood('Romantic')"> <span
-            class="emoji">💕</span>Romantic</button>
-        <button class="mood-btn" id="mood-Sad" onclick="logMood('Sad')"> <span class="emoji">😢</span>Sad</button>
-        <button class="mood-btn" id="mood-Anxious" onclick="logMood('Anxious')"> <span
-            class="emoji">😰</span>Anxious</button>
-        <button class="mood-btn" id="mood-Confident" onclick="logMood('Confident')"><span
-            class="emoji">💃</span>Confident</button>
-      </div>
-
-      <div class="sug-box mood-sug-box" id="moodSugBox">
-        <div class="sug-loading" id="moodLoading"><span class="spin">🎵</span> Finding the perfect vibe...</div>
-        <div id="moodSugContent" style="display:none;">
-          <div class="sug-row">
-            <div class="sug-icon">🎵</div>
-            <div class="sug-content">
-              <div class="sug-label">Punjabi Song</div>
-              <div class="sug-val" id="sug-song">—</div>
-              <div class="sug-sub" id="sug-song-sub">—</div>
-            </div>
-          </div>
-          <div class="sug-divider"></div>
-          <div class="sug-row">
-            <div class="sug-icon">🎬</div>
-            <div class="sug-content">
-              <div class="sug-label">Watch Tonight</div>
-              <div class="sug-val" id="sug-movie">—</div>
-              <div class="sug-sub" id="sug-movie-sub">—</div>
-            </div>
-          </div>
-          <div class="sug-divider"></div>
-          <p class="care-msg-text" id="sug-care-msg">—</p>
-          <button class="btn-refresh" onclick="refreshMoodSug()">🔄 Show me something different</button>
-        </div>
-      </div>
-
-      <p class="section-label" style="margin-top:16px;">My body feels</p>
-      <div class="mood-grid">
-        <button class="mood-btn" id="body-Fine" onclick="logBody('Fine')"> <span class="emoji">😌</span>Just
-          fine</button>
-        <button class="mood-btn" id="body-Cramps" onclick="logBody('Cramps')"> <span
-            class="emoji">🤕</span>Cramps</button>
-        <button class="mood-btn" id="body-Cravings" onclick="logBody('Cravings')"><span
-            class="emoji">🍩</span>Cravings</button>
-        <button class="mood-btn" id="body-Headache" onclick="logBody('Headache')"><span
-            class="emoji">😫</span>Headache</button>
-        <button class="mood-btn" id="body-Bloated" onclick="logBody('Bloated')"> <span
-            class="emoji">😮‍💨</span>Bloated</button>
-        <button class="mood-btn" id="body-Tired" onclick="logBody('Tired')"> <span class="emoji">🥱</span>Tired</button>
-        <button class="mood-btn" id="body-Nauseous" onclick="logBody('Nauseous')"><span
-            class="emoji">🤢</span>Nauseous</button>
-        <button class="mood-btn" id="body-Strong" onclick="logBody('Strong')"> <span
-            class="emoji">💪</span>Strong</button>
-      </div>
-
-      <div class="sug-box food-sug-box" id="foodSugBox">
-        <div class="sug-loading" id="foodLoading"><span class="spin">🍽️</span> Finding what your body needs...</div>
-        <div id="foodSugContent" style="display:none;">
-          <div class="sug-row">
-            <div class="sug-icon">🍽️</div>
-            <div class="sug-content">
-              <div class="sug-label">Eat This</div>
-              <div class="sug-val" id="sug-food">—</div>
-              <div class="sug-sub" id="sug-food-sub">—</div>
-            </div>
-          </div>
-          <div class="sug-divider"></div>
-          <div class="sug-row">
-            <div class="sug-icon">🚫</div>
-            <div class="sug-content">
-              <div class="sug-label">Avoid Today</div>
-              <div class="sug-val" id="sug-avoid">—</div>
-            </div>
-          </div>
-          <button class="btn-refresh" onclick="refreshFoodSug()">🔄 More food ideas</button>
-        </div>
-      </div>
-
-      <div class="send-hint-area" id="sendHintArea">
-        <textarea class="hint-input" id="hintText" rows="2"
-          placeholder="Add a note for someone special... (optional)"></textarea>
-        <button class="btn-primary" onclick="sendHint()">📲 Send</button>
-      </div>
-      <div id="sentConfirm"
-        style="display:none;text-align:center;margin-top:10px;color:#4CAF50;font-weight:600;font-size:13px;">✓ Sent! 💌
-      </div>
-    </div>
-
-    <!-- WATER -->
-    <div class="card">
-      <div class="card-title">💧 Hydration</div>
-      <div class="water-top">
-        <div class="water-num" id="waterNum">0 <span>/ 8</span></div>
-        <div style="display:flex;gap:8px;">
-          <button
-            style="padding:12px 16px;border:2px solid var(--blush-deep);background:transparent;border-radius:12px;color:var(--muted);font-size:18px;cursor:pointer;min-width:48px;min-height:48px;"
-            onclick="removeWater()">−</button>
-          <button class="btn-primary" style="width:auto;padding:12px 20px;" onclick="addWater()">+ Glass</button>
-        </div>
-      </div>
-      <div class="glass-row" id="glassRow"></div>
-    </div>
-
-    <!-- WISHLIST -->
-    <div class="card">
-      <div class="card-title">⭐ My Wishlist</div>
-      <div class="wish-input-row">
-        <input class="wish-input" id="wishInput" placeholder="I really want... 🌟"
-          onkeydown="if(event.key==='Enter')addWish()">
-        <button class="btn-add-wish" onclick="addWish()">+</button>
-      </div>
-      <div class="wish-list" id="wishList"></div>
-      <div class="wish-note">✨ Your personal dream list!</div>
-    </div>
-
-    <!-- CHAT -->
-    <div class="card">
-      <div class="card-title"><span class="notif-wrap">💬 Messages<span class="notif-dot" id="chatDot"></span></span>
-      </div>
-      <div class="chat-win" id="chatWin">
-        <div class="chat-empty">Start the conversation 🌸</div>
-      </div>
-      <div class="chat-in-row">
-        <textarea class="chat-inp" id="chatInp" rows="1" placeholder="Type something..."></textarea>
-        <button class="btn-send" onclick="sendMsg()">➤</button>
-      </div>
-    </div>
-
-    <div class="sync-banner">
-      <div class="sync-dot" id="syncDot"></div><span id="syncLabel">Connecting to cloud...</span>
-    </div>
-    <footer>Made with love, just for you 💕</footer>
+  <div class="connect-badge">
+    <div class="code" id="sharedCode">—</div>
+    <p>Your sync code ✨</p>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  <div class="card">
+    <div class="card-title">📅 Cycle Overview</div>
+    <div class="cycle-display" id="cycleDisplay" style="display:none;">
+      <div class="cycle-day-circle"><span class="num" id="cycleDay">—</span><span class="lbl">day</span></div>
+      <div class="cycle-info">
+        <div class="phase-badge" id="phaseBadge">—</div>
+        <div class="next-period">Next: <strong id="nextPeriodDate">—</strong></div>
+      </div>
+    </div>
+    <div class="cycle-inputs">
+      <div class="input-row">
+        <div class="input-group"><label>Last Period</label><input type="date" id="lastDate"></div>
+        <div class="input-group"><label>Cycle Length</label><input type="number" id="cycleLength" value="28" min="20" max="45"></div>
+      </div>
+      <button class="btn-primary" onclick="calculateCycle()">Update My Cycle</button>
+    </div>
+  </div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBjBpvCuqP5KOKIwHrJnQnRNswAAokHGUA",
-      authDomain: "coupleapp-37825.firebaseapp.com",
-      projectId: "coupleapp-37825",
-      storageBucket: "coupleapp-37825.firebasestorage.app",
-      messagingSenderId: "120683859715",
-      appId: "1:120683859715:web:10066a0a9763ca3b9c6336"
-    };
+  <div class="card">
+    <div class="card-title">💖 How are you feeling?</div>
+    <p class="section-label">My mood today</p>
+    <div class="mood-grid">
+      <button class="mood-btn" id="mood-Happy"     onclick="logMood('Happy')">    <span class="emoji">🥰</span>Happy</button>
+      <button class="mood-btn" id="mood-Sensitive" onclick="logMood('Sensitive')"><span class="emoji">🥺</span>Sensitive</button>
+      <button class="mood-btn" id="mood-Annoyed"   onclick="logMood('Annoyed')">  <span class="emoji">😤</span>Annoyed</button>
+      <button class="mood-btn" id="mood-Exhausted" onclick="logMood('Exhausted')"><span class="emoji">😴</span>Exhausted</button>
+      <button class="mood-btn" id="mood-Romantic"  onclick="logMood('Romantic')"> <span class="emoji">💕</span>Romantic</button>
+      <button class="mood-btn" id="mood-Sad"       onclick="logMood('Sad')">      <span class="emoji">😢</span>Sad</button>
+      <button class="mood-btn" id="mood-Anxious"   onclick="logMood('Anxious')">  <span class="emoji">😰</span>Anxious</button>
+      <button class="mood-btn" id="mood-Confident" onclick="logMood('Confident')"><span class="emoji">💃</span>Confident</button>
+    </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    <div class="sug-box mood-sug-box" id="moodSugBox">
+      <div class="sug-loading" id="moodLoading"><span class="spin">🎵</span> Finding the perfect vibe...</div>
+      <div id="moodSugContent" style="display:none;">
+        <div class="sug-row"><div class="sug-icon">🎵</div><div class="sug-content"><div class="sug-label">Punjabi Song</div><div class="sug-val" id="sug-song">—</div><div class="sug-sub" id="sug-song-sub">—</div></div></div>
+        <div class="sug-divider"></div>
+        <div class="sug-row"><div class="sug-icon">🎬</div><div class="sug-content"><div class="sug-label">Watch Tonight</div><div class="sug-val" id="sug-movie">—</div><div class="sug-sub" id="sug-movie-sub">—</div></div></div>
+        <div class="sug-divider"></div>
+        <p class="care-msg-text" id="sug-care-msg">—</p>
+        <button class="btn-refresh" onclick="refreshMoodSug()">🔄 Show me something different</button>
+      </div>
+    </div>
 
-    // ── SHARED CODE ──
-    let sharedCode = localStorage.getItem("sharedCode");
-    if (!sharedCode) {
-      sharedCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-      localStorage.setItem("sharedCode", sharedCode);
-    }
-    document.getElementById("sharedCode").textContent = sharedCode;
+    <p class="section-label" style="margin-top:16px;">My body feels</p>
+    <div class="mood-grid">
+      <button class="mood-btn" id="body-Fine"     onclick="logBody('Fine')">    <span class="emoji">😌</span>Just fine</button>
+      <button class="mood-btn" id="body-Cramps"   onclick="logBody('Cramps')">  <span class="emoji">🤕</span>Cramps</button>
+      <button class="mood-btn" id="body-Cravings" onclick="logBody('Cravings')"><span class="emoji">🍩</span>Cravings</button>
+      <button class="mood-btn" id="body-Headache" onclick="logBody('Headache')"><span class="emoji">😫</span>Headache</button>
+      <button class="mood-btn" id="body-Bloated"  onclick="logBody('Bloated')"> <span class="emoji">😮‍💨</span>Bloated</button>
+      <button class="mood-btn" id="body-Tired"    onclick="logBody('Tired')">   <span class="emoji">🥱</span>Tired</button>
+      <button class="mood-btn" id="body-Nauseous" onclick="logBody('Nauseous')"><span class="emoji">🤢</span>Nauseous</button>
+      <button class="mood-btn" id="body-Strong"   onclick="logBody('Strong')">  <span class="emoji">💪</span>Strong</button>
+    </div>
 
-    // ── FIREBASE SYNC ──
-    const stateRef = () => doc(db, "sessions", sharedCode);
+    <div class="sug-box food-sug-box" id="foodSugBox">
+      <div class="sug-loading" id="foodLoading"><span class="spin">🍽️</span> Finding what your body needs...</div>
+      <div id="foodSugContent" style="display:none;">
+        <div class="sug-row"><div class="sug-icon">🍽️</div><div class="sug-content"><div class="sug-label">Eat This</div><div class="sug-val" id="sug-food">—</div><div class="sug-sub" id="sug-food-sub">—</div></div></div>
+        <div class="sug-divider"></div>
+        <div class="sug-row"><div class="sug-icon">🚫</div><div class="sug-content"><div class="sug-label">Avoid Today</div><div class="sug-val" id="sug-avoid">—</div></div></div>
+        <button class="btn-refresh" onclick="refreshFoodSug()">🔄 More food ideas</button>
+      </div>
+    </div>
 
-    async function syncToFirebase(data) {
-      try {
-        await setDoc(stateRef(), { ...data, ts: Date.now() }, { merge: true });
-        document.getElementById("syncDot").style.background = "#4CAF50";
-        document.getElementById("syncLabel").textContent = "Saved ✨";
-      } catch (e) {
-        document.getElementById("syncDot").style.background = "#FF9800";
-        document.getElementById("syncLabel").textContent = "Offline — will sync when connected";
-      }
-    }
+    <div class="send-hint-area" id="sendHintArea">
+      <textarea class="hint-input" id="hintText" rows="2" placeholder="Add a note... (optional)"></textarea>
+      <button class="btn-primary" onclick="sendHint()">📲 Send</button>
+    </div>
+    <div id="sentConfirm" style="display:none;text-align:center;margin-top:10px;color:#4CAF50;font-weight:600;font-size:13px;">✓ Sent! 💌</div>
+  </div>
 
-    let cachedState = {};
-    async function loadState() {
-      try {
-        const snap = await getDoc(stateRef());
-        if (snap.exists()) cachedState = snap.data();
-        return cachedState;
-      } catch (e) { return {}; }
-    }
+  <div class="card">
+    <div class="card-title">💧 Hydration</div>
+    <div class="water-top">
+      <div class="water-num" id="waterNum">0 <span>/ 8</span></div>
+      <div style="display:flex;gap:8px;">
+        <button style="padding:12px 16px;border:2px solid var(--blush-deep);background:transparent;border-radius:12px;color:var(--muted);font-size:18px;cursor:pointer;min-width:48px;min-height:48px;" onclick="removeWater()">−</button>
+        <button class="btn-primary" style="width:auto;padding:12px 20px;" onclick="addWater()">+ Glass</button>
+      </div>
+    </div>
+    <div class="glass-row" id="glassRow"></div>
+  </div>
 
-    // ── INIT ──
-    window._fbReady = false;
-    (async () => {
-      document.getElementById("fbStatus").textContent = "🔗 Connected!";
-      document.getElementById("syncLabel").textContent = "Connected to cloud ✨";
-      const s = await loadState();
-      water = s.waterDate === new Date().toDateString() ? (s.water || 0) : 0;
-      updateWaterUI();
-      if (s.lastDate) {
-        document.getElementById("lastDate").value = s.lastDate;
-        document.getElementById("cycleLength").value = s.cycleLength || 28;
-        calculateCycle(true);
-      }
-      if (s.mood) { highlightBtn("mood", s.mood); currentMood = s.mood; }
-      if (s.body) { highlightBtn("body", s.body); currentBody = s.body; }
-      if (s.wishes) { wishes = s.wishes; renderWishes(); }
-      window._fbReady = true;
+  <div class="card">
+    <div class="card-title">⭐ My Wishlist</div>
+    <div class="wish-input-row">
+      <input class="wish-input" id="wishInput" placeholder="I really want... 🌟" onkeydown="if(event.key==='Enter')addWish()">
+      <button class="btn-add-wish" onclick="addWish()">+</button>
+    </div>
+    <div class="wish-list" id="wishList"></div>
+    <div class="wish-note">✨ Your personal dream list!</div>
+  </div>
 
-      // Real-time chat listener
-      const chatCol = collection(db, "sessions", sharedCode, "messages");
-      const chatQ = query(chatCol, orderBy("ts"));
-      onSnapshot(chatQ, snap => {
-        allMessages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderChat();
-      });
-    })();
+  <div class="card">
+    <div class="card-title"><span class="notif-wrap">💬 Messages<span class="notif-dot" id="chatDot"></span></span></div>
+    <div class="chat-win" id="chatWin"><div class="chat-empty">Start the conversation 🌸</div></div>
+    <div class="chat-in-row">
+      <textarea class="chat-inp" id="chatInp" rows="1" placeholder="Type something..."></textarea>
+      <button class="btn-send" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
 
-    // ── CYCLE ──
-    function calculateCycle(silent) {
-      const dateVal = document.getElementById("lastDate").value;
-      const len = parseInt(document.getElementById("cycleLength").value);
-      if (!dateVal) return;
-      const last = new Date(dateVal); last.setMinutes(last.getMinutes() + last.getTimezoneOffset());
-      const diff = Math.floor((new Date() - last) / 86400000);
-      const day = (diff % len) + 1;
-      const next = new Date(last); next.setDate(next.getDate() + len);
-      const phase = day <= 5 ? "🩸 Menstrual" : day <= 13 ? "🌱 Follicular" : day <= 16 ? "✨ Ovulation" : "🍂 Luteal";
-      document.getElementById("cycleDay").textContent = day;
-      document.getElementById("phaseBadge").textContent = phase;
-      document.getElementById("nextPeriodDate").textContent = next.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-      document.getElementById("cycleDisplay").style.display = "flex";
-      syncToFirebase({ lastDate: dateVal, cycleLength: len, cycleDay: day, phase, nextPeriod: next.toLocaleDateString() });
-      if (!silent) showToast("Cycle updated! ✨");
-    }
-    window.calculateCycle = calculateCycle;
+  <div class="sync-banner"><div class="sync-dot" id="syncDot"></div><span id="syncLabel">Connecting...</span></div>
+  <footer>Made with love, just for you 💕</footer>
+</div>
 
-    // ── MOOD & BODY ──
-    let currentMood = null, currentBody = null;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    function logMood(val) {
-      currentMood = val; highlightBtn("mood", val);
-      syncToFirebase({ mood: val, moodTs: Date.now() });
-      document.getElementById("sendHintArea").classList.add("visible");
-      document.getElementById("sentConfirm").style.display = "none";
-      fetchMoodSug(val);
-    }
-    window.logMood = logMood;
+const firebaseConfig = {
+  apiKey: "AIzaSyBjBpvCuqP5KOKIwHrJnQnRNswAAokHGUA",
+  authDomain: "coupleapp-37825.firebaseapp.com",
+  projectId: "coupleapp-37825",
+  storageBucket: "coupleapp-37825.firebasestorage.app",
+  messagingSenderId: "120683859715",
+  appId: "1:120683859715:web:10066a0a9763ca3b9c6336"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
 
-    function logBody(val) {
-      currentBody = val; highlightBtn("body", val);
-      syncToFirebase({ body: val, bodyTs: Date.now() });
-      document.getElementById("sendHintArea").classList.add("visible");
-      document.getElementById("sentConfirm").style.display = "none";
-      fetchFoodSug(val);
-    }
-    window.logBody = logBody;
+const GEMINI_KEY = "AIzaSyA29SfOmhuX2QL-2Ht31RH3iX-hlaSJ3wg";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
 
-    function highlightBtn(type, val) {
-      document.querySelectorAll(`[id^="${type}-"]`).forEach(b => b.classList.remove("selected"));
-      const b = document.getElementById(`${type}-${val}`); if (b) b.classList.add("selected");
-    }
+async function askGemini(prompt) {
+  const res = await fetch(GEMINI_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+  });
+  const data = await res.json();
+  const text = data.candidates[0].content.parts[0].text.trim().replace(/```json|```/g, "").trim();
+  return JSON.parse(text);
+}
 
-    // ── AI MOOD SUGGESTION ──
-    async function fetchMoodSug(mood) {
-      const box = document.getElementById("moodSugBox"), ld = document.getElementById("moodLoading"), cnt = document.getElementById("moodSugContent");
-      box.classList.add("visible"); ld.style.display = "block"; cnt.style.display = "none";
-      const prompt = `A girl is feeling "${mood}" today. Give her ONE perfect Punjabi song (from artists like Arjan Dhillon, AP Dhillon, Shubh, Karan Aujla, Sidhu Moosewala, Diljit Dosanjh, Ammy Virk, Gurnam Bhullar, Jordan Sandhu, Parmish Verma, B Praak, Jassi Gill, Hardy Sandhu, Satinder Sartaaj etc.) and ONE movie or web show (Bollywood/Punjabi/Hindi/Netflix/Amazon — romantic, comedy, drama, thriller, heartbreak, feel-good — whatever fits this mood). Give a DIFFERENT suggestion each time, be creative.
+// ── SHARED CODE ──
+let sharedCode = localStorage.getItem("sharedCode");
+if (!sharedCode) { sharedCode = Math.random().toString(36).substring(2,8).toUpperCase(); localStorage.setItem("sharedCode", sharedCode); }
+document.getElementById("sharedCode").textContent = sharedCode;
 
-Reply ONLY in this exact JSON (no markdown):
-{"song":"Song Name","artist":"Artist","song_why":"Why this song fits her mood (1 sentence)","watch":"Title","watch_type":"Movie/Web Series","watch_why":"Why this fits her mood (1 sentence)","care_msg":"Warm supportive message mixing Hindi/Punjabi words like yaar, hanji, dil naturally (2 sentences)"}`;
-      try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 600, messages: [{ role: "user", content: prompt }] }) });
-        const data = await res.json();
-        const d = JSON.parse(data.content[0].text.trim().replace(/```json|```/g, "").trim());
-        document.getElementById("sug-song").textContent = d.song;
-        document.getElementById("sug-song-sub").textContent = d.artist + " · " + d.song_why;
-        document.getElementById("sug-movie").textContent = d.watch + " (" + d.watch_type + ")";
-        document.getElementById("sug-movie-sub").textContent = d.watch_why;
-        document.getElementById("sug-care-msg").textContent = d.care_msg;
-        syncToFirebase({ moodSug: d, mood: currentMood });
-      } catch (e) {
-        document.getElementById("sug-song").textContent = "Excuses – Arjan Dhillon";
-        document.getElementById("sug-song-sub").textContent = "A timeless pick for any mood 🎵";
-        document.getElementById("sug-movie").textContent = "Rab Ne Bana Di Jodi (Movie)";
-        document.getElementById("sug-movie-sub").textContent = "Feel-good Bollywood classic 🎬";
-        document.getElementById("sug-care-msg").textContent = "Tu amazing hai yaar, don't forget that! 💕";
-      }
-      ld.style.display = "none"; cnt.style.display = "block";
-    }
-    function refreshMoodSug() { if (currentMood) fetchMoodSug(currentMood); }
-    window.refreshMoodSug = refreshMoodSug;
+// ── FIREBASE ──
+const stateRef = () => doc(db, "sessions", sharedCode);
+async function syncToFirebase(data) {
+  try {
+    await setDoc(stateRef(), { ...data, ts: Date.now() }, { merge: true });
+    document.getElementById("syncDot").style.background = "#4CAF50";
+    document.getElementById("syncLabel").textContent = "Saved ✨";
+  } catch(e) {
+    document.getElementById("syncDot").style.background = "#FF9800";
+    document.getElementById("syncLabel").textContent = "Offline — will sync when connected";
+  }
+}
 
-    // ── AI FOOD SUGGESTION ──
-    async function fetchFoodSug(bodyFeel) {
-      const box = document.getElementById("foodSugBox"), ld = document.getElementById("foodLoading"), cnt = document.getElementById("foodSugContent");
-      box.classList.add("visible"); ld.style.display = "block"; cnt.style.display = "none";
-      const prompt = `A girl's body is feeling "${bodyFeel}" during her menstrual cycle. Suggest specific foods. Be creative, vary between Indian (dal, khichdi, sabzi, chai, lassi etc.) and general foods. Different suggestion each time.
+// ── INIT ──
+(async () => {
+  document.getElementById("syncLabel").textContent = "Connected ✨";
+  let s = {};
+  try { const snap = await getDoc(stateRef()); if (snap.exists()) s = snap.data(); } catch(e) {}
+  water = s.waterDate === new Date().toDateString() ? (s.water || 0) : 0;
+  updateWaterUI();
+  if (s.lastDate) { document.getElementById("lastDate").value = s.lastDate; document.getElementById("cycleLength").value = s.cycleLength || 28; calculateCycle(true); }
+  if (s.mood) { highlightBtn("mood", s.mood); currentMood = s.mood; }
+  if (s.body) { highlightBtn("body", s.body); currentBody = s.body; }
+  if (s.wishes) { wishes = s.wishes; renderWishes(); }
 
-Reply ONLY in this exact JSON (no markdown):
-{"eat":"3 specific foods/drinks with brief reason each","eat_why":"Short overall benefit for her body right now","avoid":"3 specific things to avoid and why"}`;
-      try {
-        const res = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model: "claude-sonnet-4-20250514", max_tokens: 400, messages: [{ role: "user", content: prompt }] }) });
-        const data = await res.json();
-        const d = JSON.parse(data.content[0].text.trim().replace(/```json|```/g, "").trim());
-        document.getElementById("sug-food").textContent = d.eat;
-        document.getElementById("sug-food-sub").textContent = d.eat_why;
-        document.getElementById("sug-avoid").textContent = d.avoid;
-        syncToFirebase({ bodySug: d, body: currentBody });
-      } catch (e) {
-        document.getElementById("sug-food").textContent = "Dark chocolate, banana, ginger tea";
-        document.getElementById("sug-food-sub").textContent = "Great for how you're feeling 💕";
-        document.getElementById("sug-avoid").textContent = "Caffeine, salty snacks, processed foods";
-      }
-      ld.style.display = "none"; cnt.style.display = "block";
-    }
-    function refreshFoodSug() { if (currentBody) fetchFoodSug(currentBody); }
-    window.refreshFoodSug = refreshFoodSug;
+  const chatQ = query(collection(db, "sessions", sharedCode, "messages"), orderBy("ts"));
+  onSnapshot(chatQ, snap => { allMessages = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderChat(); });
+})();
 
-    // ── HINT ──
-    async function sendHint() {
-      const note = document.getElementById("hintText").value;
-      await syncToFirebase({ hintNote: note, hintSent: true, hintTs: Date.now() });
-      document.getElementById("sentConfirm").style.display = "block";
-      document.getElementById("sendHintArea").classList.remove("visible");
-      showToast("Sent! 💌");
-    }
-    window.sendHint = sendHint;
+// ── CYCLE ──
+function calculateCycle(silent) {
+  const dateVal = document.getElementById("lastDate").value, len = parseInt(document.getElementById("cycleLength").value);
+  if (!dateVal) return;
+  const last = new Date(dateVal); last.setMinutes(last.getMinutes() + last.getTimezoneOffset());
+  const diff = Math.floor((new Date() - last) / 86400000), day = (diff % len) + 1;
+  const next = new Date(last); next.setDate(next.getDate() + len);
+  const phase = day <= 5 ? "🩸 Menstrual" : day <= 13 ? "🌱 Follicular" : day <= 16 ? "✨ Ovulation" : "🍂 Luteal";
+  document.getElementById("cycleDay").textContent = day;
+  document.getElementById("phaseBadge").textContent = phase;
+  document.getElementById("nextPeriodDate").textContent = next.toLocaleDateString(undefined, {month:'short',day:'numeric'});
+  document.getElementById("cycleDisplay").style.display = "flex";
+  syncToFirebase({ lastDate: dateVal, cycleLength: len, cycleDay: day, phase, nextPeriod: next.toLocaleDateString() });
+  if (!silent) showToast("Cycle updated! ✨");
+}
+window.calculateCycle = calculateCycle;
 
-    // ── WATER ──
-    let water = 0;
-    function addWater() { if (water >= 8) return; water++; updateWaterUI(); syncToFirebase({ water, waterDate: new Date().toDateString() }); }
-    function removeWater() { if (water <= 0) return; water--; updateWaterUI(); syncToFirebase({ water, waterDate: new Date().toDateString() }); }
-    function updateWaterUI() { document.getElementById("waterNum").innerHTML = water + ' <span>/ 8</span>'; renderGlasses(); }
-    function renderGlasses() {
-      const row = document.getElementById("glassRow"); row.innerHTML = "";
-      for (let i = 0; i < 8; i++) { const g = document.createElement("div"); g.className = "glass" + (i < water ? " filled" : ""); row.appendChild(g); }
-    }
-    window.addWater = addWater; window.removeWater = removeWater;
+let currentMood = null, currentBody = null;
+function logMood(val) {
+  currentMood = val; highlightBtn("mood", val);
+  syncToFirebase({ mood: val, moodTs: Date.now() });
+  document.getElementById("sendHintArea").classList.add("visible");
+  document.getElementById("sentConfirm").style.display = "none";
+  fetchMoodSug(val);
+}
+window.logMood = logMood;
 
-    // ── WISHLIST ──
-    let wishes = [];
-    async function saveWishes() {
-      await syncToFirebase({ wishes, wishlistTs: Date.now() });
-      renderWishes();
-    }
-    function addWish() {
-      const v = document.getElementById("wishInput").value.trim(); if (!v) return;
-      wishes.unshift({ id: Date.now(), text: v, ts: Date.now() });
-      document.getElementById("wishInput").value = "";
-      saveWishes(); showToast("Added ⭐");
-    }
-    function deleteWish(id) { wishes = wishes.filter(w => w.id !== id); saveWishes(); }
-    function renderWishes() {
-      const list = document.getElementById("wishList");
-      if (!wishes.length) { list.innerHTML = `<div class="wish-empty"><div class="big">🌟</div>Pin your first wish!</div>`; return; }
-      list.innerHTML = wishes.map(w => `<div class="wish-item"><div style="color:var(--gold);font-size:14px;flex-shrink:0;">✦</div><div class="wish-text">${escHtml(w.text)}</div><button class="wish-del" onclick="deleteWish(${w.id})">✕</button></div>`).join("");
-    }
-    window.addWish = addWish; window.deleteWish = deleteWish;
+function logBody(val) {
+  currentBody = val; highlightBtn("body", val);
+  syncToFirebase({ body: val, bodyTs: Date.now() });
+  document.getElementById("sendHintArea").classList.add("visible");
+  document.getElementById("sentConfirm").style.display = "none";
+  fetchFoodSug(val);
+}
+window.logBody = logBody;
 
-    // ── CHAT (Firestore subcollection) ──
-    let allMessages = [];
-    async function sendMsg() {
-      const inp = document.getElementById("chatInp"), text = inp.value.trim(); if (!text) return;
-      inp.value = "";
-      const chatCol = collection(db, "sessions", sharedCode, "messages");
-      await addDoc(chatCol, { text, from: "her", ts: Date.now() });
-    }
-    window.sendMsg = sendMsg;
+function highlightBtn(type, val) {
+  document.querySelectorAll(`[id^="${type}-"]`).forEach(b => b.classList.remove("selected"));
+  const b = document.getElementById(`${type}-${val}`); if (b) b.classList.add("selected");
+}
 
-    // Enter key for chat
-    document.getElementById("chatInp").addEventListener("keydown", e => {
-      if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-    });
+// ── MOOD SUGGESTION (Gemini) ──
+async function fetchMoodSug(mood) {
+  const box = document.getElementById("moodSugBox"), ld = document.getElementById("moodLoading"), cnt = document.getElementById("moodSugContent");
+  box.classList.add("visible"); ld.style.display = "block"; cnt.style.display = "none";
+  const prompt = `A girl is feeling "${mood}" today. Give her ONE perfect Punjabi song (from artists like Arjan Dhillon, AP Dhillon, Shubh, Karan Aujla, Sidhu Moosewala, Diljit Dosanjh, Ammy Virk, Gurnam Bhullar, Jordan Sandhu, Parmish Verma, B Praak, Jassi Gill, Hardy Sandhu, Satinder Sartaaj, Mankirt Aulakh etc.) and ONE movie or web show (Bollywood/Punjabi/Hindi/Netflix/Amazon — romantic, comedy, drama, thriller, heartbreak, feel-good — whatever fits this mood best). Give a DIFFERENT suggestion each time, be creative and vary widely.
 
-    function renderChat() {
-      const win = document.getElementById("chatWin");
-      if (!allMessages.length) { win.innerHTML = `<div class="chat-empty">Start the conversation 🌸</div>`; return; }
-      const seenTs = parseInt(localStorage.getItem("her_chat_seen") || "0");
-      const newOnes = allMessages.filter(c => c.from === "bestie" && c.ts > seenTs).length;
-      document.getElementById("chatDot").style.display = newOnes ? "block" : "none";
-      win.innerHTML = allMessages.map(c => `<div class="bubble ${c.from === 'her' ? 'me' : 'them'}">${escHtml(c.text)}<div class="bt">${fmtTime(c.ts)}</div></div>`).join("");
-      win.scrollTop = win.scrollHeight;
-      localStorage.setItem("her_chat_seen", Date.now());
-    }
+Reply ONLY in this exact JSON (no markdown, no extra text outside JSON):
+{"song":"Song Name","artist":"Artist Name","song_why":"Why this song fits her mood right now in 1 sentence","watch":"Title","watch_type":"Movie or Web Series","watch_why":"Why this fits her mood in 1 sentence","care_msg":"Warm supportive 2 sentence message mixing Hindi/Punjabi words like yaar, hanji, dil naturally"}`;
+  try {
+    const d = await askGemini(prompt);
+    document.getElementById("sug-song").textContent = d.song;
+    document.getElementById("sug-song-sub").textContent = d.artist + " · " + d.song_why;
+    document.getElementById("sug-movie").textContent = d.watch + " (" + d.watch_type + ")";
+    document.getElementById("sug-movie-sub").textContent = d.watch_why;
+    document.getElementById("sug-care-msg").textContent = d.care_msg;
+    syncToFirebase({ moodSug: d, mood: currentMood });
+  } catch(e) {
+    document.getElementById("sug-song").textContent = "Excuses – Arjan Dhillon";
+    document.getElementById("sug-song-sub").textContent = "A timeless pick for any mood 🎵";
+    document.getElementById("sug-movie").textContent = "Rab Ne Bana Di Jodi (Movie)";
+    document.getElementById("sug-movie-sub").textContent = "Feel-good Bollywood classic 🎬";
+    document.getElementById("sug-care-msg").textContent = "Tu amazing hai yaar, don't forget that! 💕";
+  }
+  ld.style.display = "none"; cnt.style.display = "block";
+}
+function refreshMoodSug() { if (currentMood) fetchMoodSug(currentMood); }
+window.refreshMoodSug = refreshMoodSug;
 
-    // ── UTILS ──
-    function fmtTime(ts) { return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
-    function escHtml(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
-    function showToast(msg) {
-      let t = document.createElement("div");
-      t.style.cssText = "position:fixed;bottom:34px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#F43F6B,#FF6B9E);color:white;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;z-index:999;box-shadow:0 6px 20px rgba(244,63,107,0.35);white-space:nowrap;";
-      t.textContent = msg; document.body.appendChild(t);
-      setTimeout(() => t.remove(), 2200);
-    }
-  </script>
+// ── FOOD SUGGESTION (Gemini) ──
+async function fetchFoodSug(bodyFeel) {
+  const box = document.getElementById("foodSugBox"), ld = document.getElementById("foodLoading"), cnt = document.getElementById("foodSugContent");
+  box.classList.add("visible"); ld.style.display = "block"; cnt.style.display = "none";
+  const prompt = `A girl's body is feeling "${bodyFeel}" during her menstrual cycle. Suggest specific foods and drinks. Be creative, vary between Indian foods (dal, khichdi, sabzi, chai, lassi, paratha etc.) and general foods. Give DIFFERENT suggestions each time.
+
+Reply ONLY in this exact JSON (no markdown, no extra text outside JSON):
+{"eat":"3 specific foods or drinks with brief reason each, separated by commas","eat_why":"Short overall benefit explanation for her body right now","avoid":"3 specific things to avoid with brief reason each"}`;
+  try {
+    const d = await askGemini(prompt);
+    document.getElementById("sug-food").textContent = d.eat;
+    document.getElementById("sug-food-sub").textContent = d.eat_why;
+    document.getElementById("sug-avoid").textContent = d.avoid;
+    syncToFirebase({ bodySug: d, body: currentBody });
+  } catch(e) {
+    document.getElementById("sug-food").textContent = "Dark chocolate, banana, ginger tea";
+    document.getElementById("sug-food-sub").textContent = "Great for how you're feeling 💕";
+    document.getElementById("sug-avoid").textContent = "Caffeine, salty snacks, processed foods";
+  }
+  ld.style.display = "none"; cnt.style.display = "block";
+}
+function refreshFoodSug() { if (currentBody) fetchFoodSug(currentBody); }
+window.refreshFoodSug = refreshFoodSug;
+
+// ── HINT ──
+async function sendHint() {
+  const note = document.getElementById("hintText").value;
+  await syncToFirebase({ hintNote: note, hintSent: true, hintTs: Date.now() });
+  document.getElementById("sentConfirm").style.display = "block";
+  document.getElementById("sendHintArea").classList.remove("visible");
+  showToast("Sent! 💌");
+}
+window.sendHint = sendHint;
+
+// ── WATER ──
+let water = 0;
+function addWater() { if (water >= 8) return; water++; updateWaterUI(); syncToFirebase({ water, waterDate: new Date().toDateString() }); }
+function removeWater() { if (water <= 0) return; water--; updateWaterUI(); syncToFirebase({ water, waterDate: new Date().toDateString() }); }
+function updateWaterUI() { document.getElementById("waterNum").innerHTML = water + ' <span>/ 8</span>'; renderGlasses(); }
+function renderGlasses() {
+  const row = document.getElementById("glassRow"); row.innerHTML = "";
+  for (let i = 0; i < 8; i++) { const g = document.createElement("div"); g.className = "glass" + (i < water ? " filled" : ""); row.appendChild(g); }
+}
+window.addWater = addWater; window.removeWater = removeWater;
+
+// ── WISHLIST ──
+let wishes = [];
+async function saveWishes() { await syncToFirebase({ wishes, wishlistTs: Date.now() }); renderWishes(); }
+function addWish() {
+  const v = document.getElementById("wishInput").value.trim(); if (!v) return;
+  wishes.unshift({ id: Date.now(), text: v, ts: Date.now() });
+  document.getElementById("wishInput").value = "";
+  saveWishes(); showToast("Added ⭐");
+}
+function deleteWish(id) { wishes = wishes.filter(w => w.id !== id); saveWishes(); }
+function renderWishes() {
+  const list = document.getElementById("wishList");
+  if (!wishes.length) { list.innerHTML = `<div class="wish-empty"><div class="big">🌟</div>Pin your first wish!</div>`; return; }
+  list.innerHTML = wishes.map(w => `<div class="wish-item"><div style="color:var(--gold);font-size:14px;flex-shrink:0;">✦</div><div class="wish-text">${escHtml(w.text)}</div><button class="wish-del" onclick="deleteWish(${w.id})">✕</button></div>`).join("");
+}
+window.addWish = addWish; window.deleteWish = deleteWish;
+
+// ── CHAT ──
+let allMessages = [];
+async function sendMsg() {
+  const inp = document.getElementById("chatInp"), text = inp.value.trim(); if (!text) return;
+  inp.value = "";
+  await addDoc(collection(db, "sessions", sharedCode, "messages"), { text, from: "her", ts: Date.now() });
+}
+window.sendMsg = sendMsg;
+document.getElementById("chatInp").addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMsg(); } });
+
+function renderChat() {
+  const win = document.getElementById("chatWin");
+  if (!allMessages.length) { win.innerHTML = `<div class="chat-empty">Start the conversation 🌸</div>`; return; }
+  const seenTs = parseInt(localStorage.getItem("her_chat_seen") || "0");
+  const newOnes = allMessages.filter(c => c.from === "bestie" && c.ts > seenTs).length;
+  document.getElementById("chatDot").style.display = newOnes ? "block" : "none";
+  win.innerHTML = allMessages.map(c => `<div class="bubble ${c.from === 'her' ? 'me' : 'them'}">${escHtml(c.text)}<div class="bt">${fmtTime(c.ts)}</div></div>`).join("");
+  win.scrollTop = win.scrollHeight;
+  localStorage.setItem("her_chat_seen", Date.now());
+}
+
+function fmtTime(ts) { return new Date(ts).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+function escHtml(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function showToast(msg) { let t = document.createElement("div"); t.style.cssText = "position:fixed;bottom:34px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#F43F6B,#FF6B9E);color:white;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;z-index:999;box-shadow:0 6px 20px rgba(244,63,107,0.35);white-space:nowrap;"; t.textContent = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 2200); }
+</script>
 </body>
-
 </html>
