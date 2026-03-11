@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Her Care Hub">
+<title>Her Care Hub 💌</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1A1A2E;--rose:#F43F6B;--rose-soft:#FF8FAB;--blush:#FFE4ED;--lilac:#E8D5FF;--lilac-dark:#9B59D0;--gold:#FFD166;--gold-dark:#F7A800;--green:#4CAF50;--muted:#9B7A8A;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:#1A0E1A;min-height:100vh;color:white;overflow-x:hidden;-webkit-tap-highlight-color:transparent;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 30%,#2E1040 0%,transparent 50%),radial-gradient(ellipse at 80% 70%,#200A1A 0%,transparent 50%),#140A14;z-index:0;}
+.app{max-width:440px;margin:0 auto;padding:0 20px 50px;position:relative;z-index:1;}
+header{padding:44px 0 24px;text-align:center;}
+.header-tag{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--rose-soft);margin-bottom:8px;}
+header h1{font-family:'Playfair Display',serif;font-size:32px;color:white;line-height:1.15;}
+header h1 em{color:var(--rose);font-style:italic;}
+header p{color:rgba(255,255,255,0.4);font-size:13px;margin-top:6px;}
+.card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:28px;padding:22px;margin-bottom:14px;backdrop-filter:blur(10px);}
+.card-title{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:16px;}
+.connect-card{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:28px;padding:22px;margin-bottom:14px;backdrop-filter:blur(10px);text-align:center;}
+.connect-card p{color:rgba(255,255,255,0.5);font-size:13px;margin-bottom:12px;}
+.code-input-row{display:flex;gap:8px;}
+.code-input{flex:1;padding:14px 16px;background:rgba(255,255,255,0.1);border:2px solid rgba(255,255,255,0.15);border-radius:14px;color:white;font-family:'Playfair Display',serif;font-size:22px;letter-spacing:4px;text-align:center;outline:none;transition:border-color 0.2s;}
+.code-input::placeholder{color:rgba(255,255,255,0.25);font-size:14px;letter-spacing:2px;font-family:'DM Sans',sans-serif;}
+.code-input:focus{border-color:var(--rose);}
+.btn-connect{padding:14px 20px;background:linear-gradient(135deg,var(--rose),#FF6B9E);color:white;border:none;border-radius:14px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.btn-connect:active{transform:scale(0.97);}
+.connected-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(76,175,80,0.15);border:1px solid rgba(76,175,80,0.3);border-radius:20px;color:#81C784;font-size:12px;font-weight:600;margin-top:10px;}
+.connected-dot{width:7px;height:7px;border-radius:50%;background:#81C784;animation:pulse 2s infinite;}
+.refresh-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.last-updated{font-size:12px;color:rgba(255,255,255,0.3);}
+.btn-refresh-ui{padding:10px 18px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:20px;color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;min-height:44px;}
+.btn-refresh-ui:active{background:rgba(255,255,255,0.14);}
+.status-empty{text-align:center;padding:20px;color:rgba(255,255,255,0.25);font-size:14px;}
+.status-empty .big{font-size:36px;margin-bottom:8px;}
+.mood-display{display:flex;align-items:center;gap:14px;padding:14px;background:rgba(255,255,255,0.05);border-radius:18px;margin-bottom:12px;}
+.mood-emoji-big{font-size:42px;}
+.mood-label{font-size:17px;font-weight:600;color:white;font-family:'Playfair Display',serif;}
+.mood-time{font-size:12px;color:rgba(255,255,255,0.35);margin-top:3px;}
+.alert-level{padding:14px 16px;border-radius:16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px;}
+.alert-level.green{background:rgba(76,175,80,0.12);border:1px solid rgba(76,175,80,0.25);}
+.alert-level.yellow{background:rgba(255,209,102,0.12);border:1px solid rgba(255,209,102,0.25);}
+.alert-level.red{background:rgba(244,63,107,0.12);border:1px solid rgba(244,63,107,0.3);}
+.alert-icon{font-size:22px;flex-shrink:0;}
+.alert-text{font-size:13px;font-weight:500;color:rgba(255,255,255,0.85);line-height:1.5;}
+.consultant-box{background:rgba(255,209,102,0.08);border:1px solid rgba(255,209,102,0.2);border-radius:20px;padding:16px;margin-bottom:12px;}
+.consultant-header{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.consultant-header .ai-dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 1.5s infinite;}
+.consultant-header span{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
+.consultant-loading{text-align:center;padding:12px;color:rgba(255,255,255,0.4);font-size:13px;}
+.consultant-loading .spin{display:inline-block;animation:spinA 1s linear infinite;}
+@keyframes spinA{to{transform:rotate(360deg);}}
+.action-list{display:flex;flex-direction:column;gap:8px;}
+.action-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:14px;}
+.action-num{width:24px;height:24px;border-radius:50%;background:var(--rose);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:white;margin-top:1px;}
+.action-text{font-size:13px;color:rgba(255,255,255,0.85);line-height:1.5;}
+.btn-refresh-ai{width:100%;margin-top:10px;padding:12px;background:rgba(255,209,102,0.1);border:1px solid rgba(255,209,102,0.2);border-radius:12px;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;min-height:44px;}
+.btn-refresh-ai:active{background:rgba(255,209,102,0.2);}
+.her-sug-row{display:flex;gap:10px;padding:12px;background:rgba(255,255,255,0.04);border-radius:14px;margin-bottom:8px;}
+.her-sug-icon{font-size:20px;flex-shrink:0;}
+.her-sug-content{flex:1;}
+.her-sug-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:3px;}
+.her-sug-val{font-size:13px;color:rgba(255,255,255,0.85);font-weight:500;}
+.her-sug-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;font-style:italic;}
+.wish-view-item{display:flex;align-items:center;gap:10px;padding:12px 14px;background:rgba(255,255,255,0.05);border-radius:14px;margin-bottom:7px;animation:fadeSlide 0.3s ease;}
+.wish-view-text{flex:1;font-size:14px;color:rgba(255,255,255,0.85);}
+.wish-view-buy{padding:8px 14px;background:rgba(244,63,107,0.18);border:1px solid rgba(244,63,107,0.3);border-radius:10px;color:var(--rose-soft);font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;white-space:nowrap;min-height:38px;}
+.wish-view-buy:active{transform:scale(0.96);}
+.wish-view-buy.bought{background:rgba(76,175,80,0.18);border-color:rgba(76,175,80,0.3);color:#81C784;}
+.wish-count-badge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--rose);color:white;font-size:11px;font-weight:700;margin-left:6px;vertical-align:middle;}
+.stats-row{display:flex;gap:10px;}
+.stat-box{flex:1;background:rgba(255,255,255,0.05);border-radius:16px;padding:14px;text-align:center;}
+.stat-value{font-family:'Playfair Display',serif;font-size:24px;color:white;}
+.stat-label{font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;}
+.phase-row{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:12px;}
+.phase-row.active{background:rgba(255,255,255,0.07);}
+.phase-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.phase-name{font-size:12px;font-weight:600;color:white;margin-bottom:2px;}
+.phase-tip{font-size:11px;color:rgba(255,255,255,0.4);line-height:1.4;}
+.phase-active-tag{font-size:9px;font-weight:700;letter-spacing:1px;background:var(--rose);color:white;padding:2px 7px;border-radius:8px;margin-left:5px;vertical-align:middle;text-transform:uppercase;}
+.water-bar-wrap{background:rgba(255,255,255,0.06);border-radius:100px;height:10px;margin-top:8px;overflow:hidden;}
+.water-bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#5BBCFF,#92D7FF);transition:width 0.5s ease;}
+.water-row-top{display:flex;justify-content:space-between;align-items:center;}
+.water-value{font-family:'Playfair Display',serif;font-size:20px;color:#5BBCFF;}
+.chat-win{height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 0 8px;margin-bottom:12px;}
+.chat-win::-webkit-scrollbar{width:3px;}
+.chat-win::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px;}
+.bub{max-width:80%;padding:10px 14px;border-radius:18px;font-size:14px;line-height:1.45;word-break:break-word;animation:fadeSlide 0.25s ease;}
+.bub.me{align-self:flex-end;background:linear-gradient(135deg,var(--rose),#FF6B9E);color:white;border-bottom-right-radius:4px;}
+.bub.them{align-self:flex-start;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.9);border-bottom-left-radius:4px;}
+.bub .btime{font-size:10px;opacity:0.55;margin-top:4px;}
+.bub.me .btime{text-align:right;}
+.chat-in-row{display:flex;gap:8px;align-items:flex-end;}
+.chat-in{flex:1;padding:12px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:18px;color:white;font-family:'DM Sans',sans-serif;font-size:16px;outline:none;resize:none;max-height:80px;transition:border-color 0.2s;}
+.chat-in:focus{border-color:rgba(244,63,107,0.5);}
+.chat-in::placeholder{color:rgba(255,255,255,0.25);}
+.btn-send{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),#FF6B9E);border:none;font-size:18px;cursor:pointer;transition:all 0.2s;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(244,63,107,0.3);}
+.btn-send:active{transform:scale(0.94);}
+.notif-dot{display:none;width:8px;height:8px;border-radius:50%;background:var(--rose);position:absolute;top:-2px;right:-2px;animation:pulse 1.5s infinite;}
+.notif-wrap{position:relative;display:inline-block;}
+.new-msg-banner{display:none;padding:8px 14px;margin-bottom:8px;background:rgba(244,63,107,0.15);border:1px solid rgba(244,63,107,0.25);border-radius:10px;font-size:13px;color:var(--rose-soft);text-align:center;font-weight:600;}
+.hint-box{background:linear-gradient(135deg,rgba(248,168,195,0.12),rgba(200,150,255,0.12));border:1px solid rgba(244,63,107,0.2);border-radius:16px;padding:14px;margin-bottom:12px;display:none;}
+.hint-box.visible{display:block;}
+.hint-label{font-size:10px;font-weight:600;letter-spacing:2px;color:var(--rose-soft);text-transform:uppercase;margin-bottom:6px;}
+.hint-text-display{font-size:14px;color:rgba(255,255,255,0.85);font-style:italic;line-height:1.5;}
+footer{text-align:center;font-size:12px;color:rgba(255,255,255,0.2);margin-top:24px;}
+@keyframes fadeSlide{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="header-tag">Bestie Dashboard</div>
+    <h1>Her <em>Care</em> Hub 💌</h1>
+    <p>Your personal period consultant. Show up right, every time.</p>
+  </header>
+
+  <div class="connect-card">
+    <p>Enter her 6-digit sync code to connect 🔗</p>
+    <div class="code-input-row">
+      <input class="code-input" id="codeInput" type="text" maxlength="6" placeholder="ABCD12" oninput="this.value=this.value.toUpperCase()">
+      <button class="btn-connect" onclick="connect()">Connect</button>
+    </div>
+    <div id="connectedBadge" class="connected-badge" style="display:none;"><div class="connected-dot"></div><span id="connectedLabel">Connected</span></div>
+  </div>
+
+  <div class="refresh-row">
+    <span class="last-updated" id="lastUpdated">Waiting for connection...</span>
+    <button class="btn-refresh-ui" onclick="manualRefresh()">⟳ Refresh</button>
+  </div>
+
+  <!-- STATUS -->
+  <div class="card">
+    <div class="card-title">💖 How She's Feeling Right Now</div>
+    <div class="status-empty" id="statusEmpty"><div class="big">🔒</div>Connect above to see her status</div>
+    <div id="herStatus" style="display:none;">
+      <div id="moodDisplayDiv" class="mood-display" style="display:none;">
+        <div class="mood-emoji-big" id="moodEmoji">—</div>
+        <div><div class="mood-label" id="moodLabel">—</div><div class="mood-time" id="moodTime">—</div></div>
+      </div>
+      <div id="bodyDisplayDiv" style="display:none;margin-bottom:12px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:6px;">BODY</div>
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,255,255,0.05);border-radius:14px;">
+          <span id="bodyEmoji" style="font-size:22px;">—</span>
+          <span id="bodyLabel" style="font-size:14px;color:rgba(255,255,255,0.85);font-weight:500;">—</span>
+        </div>
+      </div>
+      <div id="alertBox" class="alert-level" style="display:none;">
+        <div class="alert-icon" id="alertIcon">💡</div>
+        <div class="alert-text" id="alertText">—</div>
+      </div>
+      <div class="hint-box" id="hintBox">
+        <div class="hint-label">💌 Her message to you</div>
+        <div class="hint-text-display" id="hintTextDisplay">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI CONSULTANT -->
+  <div class="card" id="consultantCard" style="display:none;">
+    <div class="card-title">🤖 What You Should Do Right Now</div>
+    <div class="consultant-box">
+      <div class="consultant-header"><div class="ai-dot"></div><span>AI Period Consultant</span></div>
+      <div class="consultant-loading" id="consultantLoading"><span class="spin">💭</span> Analysing her mood & body...</div>
+      <div id="consultantContent" style="display:none;">
+        <div class="action-list" id="actionList"></div>
+        <button class="btn-refresh-ai" onclick="fetchConsultation()">💡 Get fresh advice</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HER SUGGESTIONS -->
+  <div class="card" id="herSugCard" style="display:none;">
+    <div class="card-title">🎵 What She's Into Right Now</div>
+    <div class="her-sug-row"><div class="her-sug-icon">🎵</div><div class="her-sug-content"><div class="her-sug-label">Her Song Vibe</div><div class="her-sug-val" id="her-song">—</div><div class="her-sug-sub" id="her-song-sub">—</div></div></div>
+    <div class="her-sug-row"><div class="her-sug-icon">🎬</div><div class="her-sug-content"><div class="her-sug-label">She Wants to Watch</div><div class="her-sug-val" id="her-movie">—</div><div class="her-sug-sub" id="her-movie-sub">—</div></div></div>
+    <div class="her-sug-row"><div class="her-sug-icon">🍽️</div><div class="her-sug-content"><div class="her-sug-label">Her Body Needs</div><div class="her-sug-val" id="her-food">—</div></div></div>
+  </div>
+
+  <!-- WISHLIST -->
+  <div class="card" id="wishlistCard" style="display:none;">
+    <div class="card-title">⭐ Her Wishlist<span id="wishCountBadge"></span></div>
+    <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:14px;">She pinned these — surprise her! 🎁</p>
+    <div id="wishListView"></div>
+  </div>
+
+  <!-- CYCLE -->
+  <div class="card" id="cycleCard" style="display:none;">
+    <div class="card-title">📅 Her Cycle</div>
+    <div class="stats-row" style="margin-bottom:14px;">
+      <div class="stat-box"><div class="stat-value" id="statDay">—</div><div class="stat-label">Cycle Day</div></div>
+      <div class="stat-box"><div class="stat-value" id="statNext">—</div><div class="stat-label">Next Period</div></div>
+    </div>
+    <div style="font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:8px;">Phase Guide</div>
+    <div id="phaseGuide"></div>
+  </div>
+
+  <!-- WATER -->
+  <div class="card" id="waterCard" style="display:none;">
+    <div class="card-title">💧 Her Hydration</div>
+    <div class="water-row-top"><div style="font-size:13px;color:rgba(255,255,255,0.6);">Glasses today</div><div class="water-value"><span id="waterVal">0</span>/8</div></div>
+    <div class="water-bar-wrap"><div class="water-bar-fill" id="waterFill" style="width:0%"></div></div>
+    <div id="waterTip" style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:8px;"></div>
+  </div>
+
+  <!-- CHAT -->
+  <div class="card">
+    <div class="card-title"><span class="notif-wrap">💬 Chat With Her<span class="notif-dot" id="chatNotifDot"></span></span></div>
+    <div class="new-msg-banner" id="newMsgBanner">💌 New message from her!</div>
+    <div class="chat-win" id="chatWin"><div style="text-align:center;padding:28px;color:rgba(255,255,255,0.25);font-size:13px;font-style:italic;">Connect to start chatting 💬</div></div>
+    <div class="chat-in-row">
+      <textarea class="chat-in" id="chatInInput" rows="1" placeholder="Send her a message..."></textarea>
+      <button class="btn-send" onclick="sendBestieMsg()">➤</button>
+    </div>
+  </div>
+
+  <footer>CycleCare — because good besties show up 💖</footer>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, onSnapshot, collection, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBjBpvCuqP5KOKIwHrJnQnRNswAAokHGUA",
+  authDomain: "coupleapp-37825.firebaseapp.com",
+  projectId: "coupleapp-37825",
+  storageBucket: "coupleapp-37825.firebasestorage.app",
+  messagingSenderId: "120683859715",
+  appId: "1:120683859715:web:10066a0a9763ca3b9c6336"
+};
+
+const fireApp = initializeApp(firebaseConfig);
+const db = getFirestore(fireApp);
+
+const phases = [
+  {icon:"🩸",name:"Menstrual",days:"Days 1–5",tip:"She may feel tired and crampy. Extra comfort matters most."},
+  {icon:"🌱",name:"Follicular",days:"Days 6–13",tip:"Energy rising! Great time for fun activities together."},
+  {icon:"✨",name:"Ovulation",days:"Days 14–16",tip:"Peak energy and confidence. She'll feel amazing!"},
+  {icon:"🍂",name:"Luteal",days:"Days 17–28",tip:"PMS territory. Be extra patient and understanding."}
+];
+const bodyEmojis = {Fine:"😌",Cramps:"🤕",Cravings:"🍩",Headache:"😫",Bloated:"😮‍💨",Tired:"🥱",Nauseous:"🤢",Strong:"💪"};
+const alertGuide = {
+  Happy:     {level:"green",  msg:"She's happy today! Perfect moment to plan something fun or send a sweet surprise. 🌸"},
+  Sensitive: {level:"yellow", msg:"She's feeling sensitive. Give extra reassurance — listen more than you talk. 🤍"},
+  Annoyed:   {level:"yellow", msg:"Tread carefully! Bring her favourite food, stay calm, don't argue about small things. 🍕"},
+  Exhausted: {level:"red",    msg:"She's drained. Take over tasks you can, order food, put on a cozy movie for her. 🛋️"},
+  Romantic:  {level:"green",  msg:"She's feeling romantic! Be sweet, plan something special or just be fully present. 💕"},
+  Sad:       {level:"red",    msg:"She's feeling sad. Don't try to fix it — just be there and remind her you care. 💙"},
+  Anxious:   {level:"yellow", msg:"She's anxious. Keep things calm, avoid pressure, do something grounding together. 🍵"},
+  Confident: {level:"green",  msg:"She's feeling confident! Hype her up, celebrate her energy today. 🔥"}
+};
+
+let connectedCode = localStorage.getItem("bestie_connected_code") || "";
+let boughtItems = JSON.parse(localStorage.getItem("bestie_bought") || "{}");
+let lastRawState = null;
+let unsubState = null, unsubChat = null;
+let allMessages = [];
+
+window.onload = function() {
+  if (connectedCode) { document.getElementById("codeInput").value = connectedCode; connect(true); }
+  document.getElementById("chatInInput").addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendBestieMsg(); }
+  });
+};
+
+async function connect(silent) {
+  const code = document.getElementById("codeInput").value.trim().toUpperCase();
+  if (!code || code.length < 4) { alert("Enter a valid code!"); return; }
+  connectedCode = code;
+  localStorage.setItem("bestie_connected_code", code);
+  document.getElementById("connectedBadge").style.display = "inline-flex";
+  document.getElementById("connectedLabel").textContent = "Connected to " + code;
+  if (!silent) showToast("Connected! 🎉");
+
+  // Unsubscribe old listeners
+  if (unsubState) unsubState();
+  if (unsubChat) unsubChat();
+
+  // Real-time state listener
+  unsubState = onSnapshot(doc(db, "sessions", connectedCode), snap => {
+    if (snap.exists()) { lastRawState = snap.data(); renderState(lastRawState); }
+    else { document.getElementById("lastUpdated").textContent = "No data yet — waiting for her"; }
+  });
+
+  // Real-time chat listener
+  const chatCol = collection(db, "sessions", connectedCode, "messages");
+  const chatQ = query(chatCol, orderBy("ts"));
+  unsubChat = onSnapshot(chatQ, snap => {
+    allMessages = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderBestieChat();
+  });
+}
+window.connect = connect;
+
+function manualRefresh() {
+  if (lastRawState) renderState(lastRawState);
+  showToast("Refreshed ✨");
+}
+window.manualRefresh = manualRefresh;
+
+function renderState(raw) {
+  document.getElementById("statusEmpty").style.display = "none";
+  document.getElementById("herStatus").style.display = "block";
+  const ts = raw.ts ? new Date(raw.ts) : null;
+  document.getElementById("lastUpdated").textContent = ts ? "Updated " + ts.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : "Live";
+
+  // Mood
+  if (raw.mood && alertGuide[raw.mood]) {
+    const info = alertGuide[raw.mood];
+    document.getElementById("moodEmoji").textContent = getMoodEmoji(raw.mood);
+    document.getElementById("moodLabel").textContent = raw.mood;
+    document.getElementById("moodTime").textContent = raw.moodTs ? timeAgo(raw.moodTs) : "";
+    document.getElementById("moodDisplayDiv").style.display = "flex";
+    document.getElementById("alertBox").className = "alert-level " + info.level;
+    document.getElementById("alertIcon").textContent = info.level === "red" ? "🚨" : info.level === "yellow" ? "⚠️" : "✅";
+    document.getElementById("alertText").textContent = info.msg;
+    document.getElementById("alertBox").style.display = "flex";
+    document.getElementById("consultantCard").style.display = "block";
+    fetchConsultation();
+  }
+
+  // Body
+  if (raw.body) {
+    document.getElementById("bodyEmoji").textContent = bodyEmojis[raw.body] || "💊";
+    document.getElementById("bodyLabel").textContent = "Feeling: " + raw.body;
+    document.getElementById("bodyDisplayDiv").style.display = "block";
+  }
+
+  // Her suggestions
+  if (raw.moodSug || raw.bodySug) {
+    document.getElementById("herSugCard").style.display = "block";
+    if (raw.moodSug) {
+      document.getElementById("her-song").textContent = (raw.moodSug.song || "—") + " – " + (raw.moodSug.artist || "");
+      document.getElementById("her-song-sub").textContent = raw.moodSug.song_why || "";
+      document.getElementById("her-movie").textContent = (raw.moodSug.watch || "—") + " (" + (raw.moodSug.watch_type || "") + ")";
+      document.getElementById("her-movie-sub").textContent = raw.moodSug.watch_why || "";
+    }
+    if (raw.bodySug) document.getElementById("her-food").textContent = raw.bodySug.eat || "—";
+  }
+
+  // Hint
+  if (raw.hintSent && raw.hintNote) {
+    document.getElementById("hintTextDisplay").textContent = raw.hintNote;
+    document.getElementById("hintBox").classList.add("visible");
+  }
+
+  // Cycle
+  if (raw.cycleDay) {
+    document.getElementById("cycleCard").style.display = "block";
+    document.getElementById("statDay").textContent = raw.cycleDay;
+    document.getElementById("statNext").textContent = raw.nextPeriod || "—";
+    renderPhaseGuide(raw.cycleDay);
+  }
+
+  // Water
+  if (raw.water !== undefined) {
+    document.getElementById("waterCard").style.display = "block";
+    document.getElementById("waterVal").textContent = raw.water;
+    document.getElementById("waterFill").style.width = (raw.water / 8 * 100) + "%";
+    const tips = ["Barely started — remind her to drink! 💧", "Good start, keep going!", "Halfway there 👍", "Almost fully hydrated!", "Fully hydrated! Amazing! 🌊"];
+    document.getElementById("waterTip").textContent = tips[Math.min(Math.floor(raw.water / 2), 4)];
+  }
+
+  // Wishlist
+  if (raw.wishes) renderWishlistView(raw.wishes);
+}
+
+// ── AI CONSULTANT ──
+let consultationRunning = false;
+async function fetchConsultation() {
+  if (!lastRawState || consultationRunning) return;
+  consultationRunning = true;
+  const { mood, body, cycleDay, phase, moodSug, bodySug } = lastRawState;
+  document.getElementById("consultantLoading").style.display = "block";
+  document.getElementById("consultantContent").style.display = "none";
+
+  const prompt = `You are a period care consultant advising a caring bestie/boyfriend on how to support their girl right now.
+
+Her current status:
+- Mood: ${mood || "unknown"}
+- Body feeling: ${body || "unknown"}
+- Cycle day: ${cycleDay || "unknown"}, Phase: ${phase || "unknown"}
+- Her music vibe today: ${moodSug?.song ? moodSug.song + " by " + moodSug.artist : "not set"}
+- Her food needs: ${bodySug?.eat || "not set"}
+
+Give 4 specific, practical, genuinely helpful actions this person should take RIGHT NOW. Be specific — mention actual dishes to order, exact words to say, real activities. Be warm and a little playful, naturally use one Punjabi/Hindi word (like yaar, hanji, dil). Each action should be different: 1 food, 1 emotional/words, 1 activity, 1 surprise idea. Give DIFFERENT advice each time.
+
+Reply ONLY in this exact JSON (no markdown):
+{"actions":["action 1","action 2","action 3","action 4"]}`;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:500, messages:[{role:"user",content:prompt}] }) });
+    const data = await res.json();
+    const d = JSON.parse(data.content[0].text.trim().replace(/```json|```/g,"").trim());
+    document.getElementById("actionList").innerHTML = d.actions.map((a, i) => `<div class="action-item"><div class="action-num">${i+1}</div><div class="action-text">${escHtml(a)}</div></div>`).join("");
+  } catch(e) {
+    document.getElementById("actionList").innerHTML = [
+      "Order her favourite comfort food right now — don't ask, just do it 🍕",
+      "Send a voice note telling her she's on your mind 💌",
+      "Offer to handle one task or chore so she can fully rest",
+      "Pick a feel-good movie, set it up, and be the cozy vibe she needs tonight 🎬"
+    ].map((a, i) => `<div class="action-item"><div class="action-num">${i+1}</div><div class="action-text">${a}</div></div>`).join("");
+  }
+  document.getElementById("consultantLoading").style.display = "none";
+  document.getElementById("consultantContent").style.display = "block";
+  consultationRunning = false;
+}
+window.fetchConsultation = fetchConsultation;
+
+function renderPhaseGuide(day) {
+  const guide = document.getElementById("phaseGuide"); guide.innerHTML = "";
+  const active = day <= 5 ? 0 : day <= 13 ? 1 : day <= 16 ? 2 : 3;
+  phases.forEach((p, i) => {
+    const d = document.createElement("div"); d.className = "phase-row" + (i === active ? " active" : "");
+    d.innerHTML = `<div class="phase-icon">${p.icon}</div><div><div class="phase-name">${p.name} <small style="color:rgba(255,255,255,0.3);font-size:10px;">${p.days}</small>${i === active ? '<span class="phase-active-tag">NOW</span>' : ''}</div><div class="phase-tip">${p.tip}</div></div>`;
+    guide.appendChild(d);
+  });
+}
+
+function renderWishlistView(wishes) {
+  if (!wishes || !wishes.length) { document.getElementById("wishlistCard").style.display = "none"; return; }
+  document.getElementById("wishlistCard").style.display = "block";
+  document.getElementById("wishCountBadge").innerHTML = `<span class="wish-count-badge">${wishes.length}</span>`;
+  document.getElementById("wishListView").innerHTML = wishes.map(w => {
+    const bought = boughtItems[w.id];
+    return `<div class="wish-view-item"><div style="color:#FFD166;font-size:13px;flex-shrink:0;">✦</div><div class="wish-view-text">${escHtml(w.text)}</div><button class="wish-view-buy ${bought ? 'bought' : ''}" onclick="toggleBought(${w.id},this)">${bought ? '✓ Got it!' : '🛒 Buy'}</button></div>`;
+  }).join("");
+}
+
+function toggleBought(id, btn) {
+  boughtItems[id] = !boughtItems[id];
+  localStorage.setItem("bestie_bought", JSON.stringify(boughtItems));
+  btn.className = "wish-view-buy" + (boughtItems[id] ? " bought" : "");
+  btn.textContent = boughtItems[id] ? "✓ Got it!" : "🛒 Buy";
+  if (boughtItems[id]) showToast("Marked as bought! 🎁");
+}
+window.toggleBought = toggleBought;
+
+// ── CHAT ──
+async function sendBestieMsg() {
+  if (!connectedCode) { showToast("Connect first!"); return; }
+  const inp = document.getElementById("chatInInput"), text = inp.value.trim(); if (!text) return;
+  inp.value = "";
+  const chatCol = collection(db, "sessions", connectedCode, "messages");
+  await addDoc(chatCol, { text, from: "bestie", ts: Date.now() });
+}
+window.sendBestieMsg = sendBestieMsg;
+
+function renderBestieChat() {
+  const win = document.getElementById("chatWin");
+  if (!allMessages.length) { win.innerHTML = `<div style="text-align:center;padding:28px;color:rgba(255,255,255,0.25);font-size:13px;font-style:italic;">No messages yet 💬</div>`; return; }
+  const seenTs = parseInt(localStorage.getItem("bestie_chat_seen") || "0");
+  const newMsgs = allMessages.filter(c => c.from === "her" && c.ts > seenTs).length;
+  document.getElementById("newMsgBanner").style.display = newMsgs ? "block" : "none";
+  document.getElementById("chatNotifDot").style.display = newMsgs ? "block" : "none";
+  win.innerHTML = allMessages.map(c => `<div class="bub ${c.from === 'bestie' ? 'me' : 'them'}">${escHtml(c.text)}<div class="btime">${fmtTime(c.ts)}</div></div>`).join("");
+  win.scrollTop = win.scrollHeight;
+  localStorage.setItem("bestie_chat_seen", Date.now());
+}
+
+function getMoodEmoji(m) { return {Happy:"🥰",Sensitive:"🥺",Annoyed:"😤",Exhausted:"😴",Romantic:"💕",Sad:"😢",Anxious:"😰",Confident:"💃"}[m] || "💖"; }
+function timeAgo(ts) { const d = Date.now()-ts; if(d<60000) return "just now"; if(d<3600000) return Math.floor(d/60000)+"m ago"; return Math.floor(d/3600000)+"h ago"; }
+function fmtTime(ts) { return new Date(ts).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }
+function escHtml(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function showToast(msg) { let t=document.createElement("div"); t.style.cssText="position:fixed;bottom:34px;left:50%;transform:translateX(-50%);background:white;color:#3D1A2E;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:600;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,0.3);white-space:nowrap;"; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500); }
+</script>
+</body>
+</html>
