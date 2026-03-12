@@ -251,7 +251,7 @@ const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 
 const GEMINI_KEY = "AIzaSyAhrtaKV6ijRQp8qKMQZVQKPqxB0HQ1hP0";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
 
 async function askGemini(prompt) {
   const res = await fetch(GEMINI_URL, {
