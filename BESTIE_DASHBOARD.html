@@ -230,50 +230,15 @@ const firebaseConfig = {
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 
-const GEMINI_KEY = "AIzaSyA29SfOmhuX2QL-2Ht31RH3iX-hlaSJ3wg";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
-
+const GEMINI_KEY = "AIzaSyAhrtaKV6ijRQp8qKMQZVQKPqxB0HQ1hP0";
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_KEY}`;
 
 async function askGemini(prompt) {
-  try {
-    const res = await fetch(GEMINI_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [{ text: prompt }]
-          }
-        ]
-      })
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error("Gemini error:", errText);
-      throw new Error("Gemini request failed");
-    }
-
-    const data = await res.json();
-
-    const text =
-      data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-
-    const clean = text
-      .replace(/```json/g, "")
-      .replace(/```/g, "")
-      .trim();
-
-    return JSON.parse(clean);
-
-  } catch (err) {
-    console.error("Gemini parse error:", err);
-    throw err;
-  }
+  const res = await fetch(GEMINI_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }] }) });
+  const data = await res.json();
+  const text = data.candidates[0].content.parts[0].text.trim().replace(/```json|```/g,"").trim();
+  return JSON.parse(text);
 }
-
 
 const phases = [
   {icon:"🩸",name:"Menstrual",days:"Days 1–5",tip:"She may feel tired and crampy. Extra comfort matters most."},
